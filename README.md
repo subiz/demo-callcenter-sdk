@@ -7,28 +7,26 @@ const SubizWebPhone = require('@subiz/wsclient/webphone.js')
 let access_token = 'YOUR SUBIZ PERSONAL ACCESS TOKEN HERE';
 let webphone = new SubizWebPhone(access_token)
 webphone.makeCall('036411111', '0247123456')
-
 ```
 
-Trước khi có thể Để sử dụng được SDK bạn cần
-* Một tài khoản Subiz (đăng ký dùng thử miễn phí 30 ngày)
+Trước khi có thể sử dụng được SDK bạn cần:
+* Một tài khoản Subiz ([Đăng ký dùng thử miễn phí 30 ngày](https://app.subiz.com.vn/register))
 * Tạo được access token cho tài khoản này
 * Một đầu số tổng đài đã đấu nối thành công vào Subiz
 
-Để có thể sử dụng SDK hiệu quả, bạn nên dành thời gian hiểu qua các khái nhiệm chung của Subiz
-### Khái niệm
+Để có thể sử dụng SDK hiệu quả, bạn nên dành thời gian tìm hiểu qua các khái niệm chung của Subiz
+### Khái niệm chung
 #### User
-Khách hàng của doanh nghiệp. User bao gồm các thông tin cơ bản: tên, email, SĐT, ảnh đại diện. Ngoài ra còn có thể có những thông tùy chọn riêng nhu cầu của doanh nghiệp như: ngày đăng ký, giới tính, số CMTND, ...
+Khách hàng của doanh nghiệp. User bao gồm các thông tin cơ bản: `họ tên`, `email`, `SĐT`, `ảnh đại diện`. Ngoài ra còn có thể có những thông tùy chọn riêng nhu cầu của doanh nghiệp như: `ngày đăng ký`, `giới tính`, `số CMTND`, ...
 
 Khi có người nhắn tin vào Facebook fanpage, Zalo OA hay gọi vào số tổng đài của doanh nghiệp. Subiz tự tạo một user tương ứng. User này có thể chuyển qua CRM riêng của doanh nghiệp bằng webhook. Một bản ghi user sẽ có dạng như sau:
 
 ```js
 {
   id: "usrvmnntjcngcoxnbuowf",
-  account_id: "acpxkgumifuoofoosble",
   attributes: [
-	  { key: "fullname", text: "Châu Anh" },
-		{ key: "email", text: "chauanh@gmail.com" },
+    { key: "fullname", text: "Châu Anh" },
+    { key: "email", text: "chauanh@gmail.com" },
     { key: "last_login", datetime: "2023-12-04T13:05:28Z" },
     { key: "avatar_url", text: "https://vcdn.subiz-cdn.com/file/firvonruijswrmiwoddd" },
   ],
@@ -39,12 +37,12 @@ Khi có người nhắn tin vào Facebook fanpage, Zalo OA hay gọi vào số t
 ```
 
 #### Agent
-Dùng để chỉ một thành viên của nội bộ doanh nghiệp: sale, marketing, trực page, quản lý.
-Mỗi agent sẽ được cấp một tài khoản (email/password) để sử dụng Subiz.
-Agent có thể đăng nhập vào Subiz để tạo access_token cá nhân của mình, access_token này sau đó có thể dùng để gọi API.
+Một thành viên của nội bộ doanh nghiệp, có thể là sale, marketing, trực page hay quản lý.
+
+Mỗi agent sẽ được cấp một tài khoản (email/password) để sử dụng Subiz. Agent có thể đăng nhập vào Subiz để tạo access_token cá nhân của mình, access_token này sau đó có thể dùng để gọi API.
 
 #### Conversation - Hội thoại
-Thể hiện một hội thoại (cuộc gọi) đã diễn ra. Đối tượng hội thoại sẽ ghi lại thời điểm xảy ra cuộc gọi, số tổng đài, số của khách, ghi âm và nhiều thông số của cuộc gọi.
+Một cuộc trò chuyện (cuộc gọi) với khách hàng. Hội thoại sẽ ghi lại thời điểm xảy ra cuộc gọi, số tổng đài, số của khách, ghi âm và nhiều thông số của cuộc gọi.
 
 Nếu có ID của hội thoại (giả sử là csrvqjiilytjxgffey), có thể dùng API để lấy thông tin về cuộc gọi.
 ```
@@ -99,13 +97,13 @@ Dưới đây là chi tiết của một cuộc gọi cụ thể (kết quả tr
 }
 ```
 
-## Sử dụng SDK
-### Cài đặt SDK
+### Sử dụng SDK
+#### Cài đặt SDK
 ```
 npm --save @subiz/wsclient
 ```
 
-### Thực hiện cuộc gọi đi
+#### Thực hiện cuộc gọi đi
 1. Tạo webphone
 2. Gọi `webphone.makeCall`
 
@@ -119,7 +117,7 @@ let webphone = new SubizWebPhone(access_token)
 webphone.makeCall(toNumber, fromNumber)
 ```
 
-### Lắng nghe sự kiện của cuộc gọi
+#### Lắng nghe sự kiện của cuộc gọi
 Bạn có thể gọi hàm `onEvent` để nhận các sự kiện realtime của cuộc gọi ví dụ: đổ chuông (call_dialing), kết thúc (call_ended)
 ```js
 const SubizWebPhone = require('@subiz/wsclient/webphone.js')
@@ -138,7 +136,7 @@ Các sự kiện sẽ có dạng như bên dưới
 12/5/2023, 3:09:00 PM | { "type": "call_ended", "data": {"call_info": {"conversation_id":"csrvqyzdnelvzyanls","started":1701763727793,"answered":1701763734787,"ended":1701763740189,"to_number":"0364821895","from_number":"02473021368","direction":"outbound","hangup_code":"Terminated","status":"ended","device_id":"webrtcfxfqunbgcxiakdlrtrme","member_id":"agqmwfyuehpuzpehmv","call_id":"dc5a26f3-691b-21d3-5ad3-7cfd319fadb4"}}}
 ```
 
-### Lấy file ghi âm cuộc gọi
+#### Lấy file ghi âm cuộc gọi
 Sau khi cuộc gọi kết thúc, bạn có thể tải file ghi âm về (lưu ý bạn cần bật chức năng ghi âm cho đầu số trong giao diện cài đặt của Subiz).
 ```
 let call = webphone.getCall(callid)
@@ -154,7 +152,7 @@ fetch(`https://api.subiz.com.vn/4.0/accounts/${accid}/conversations/${convoid}?x
 Lưu ý: Ngay sau khi Subiz gửi cho bạn sự kiện kết thúc cuộc gọi. File ghi âm có thể chưa được trả về ngay. Subiz cần khoảng một vài giây để upload file tùy vào độ dài của cuộc gọi. Bạn nên có cơ chế retry để đảm bảo lấy được được URL của file ghi âm.
 
 
-## Demo
+### Demo
 ![Demo](./demo.png "Demo")
 
 Để chạy được bản demo, trước tiên bạn cần clone mã nguồn repository này
