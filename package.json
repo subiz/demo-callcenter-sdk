@@ -1,0 +1,23 @@
+{
+  "name": "@subiz/demo-callcenter-sdk",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/subiz/wsclient.git"
+  },
+  "author": "Thanh Pham <thanhpham@vietnambiz.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/subiz/demo-callcenter-sdk#readme",
+  "description": "",
+  "devDependencies": {
+    "tape": "^5.7.2",
+    "vite": "^5.0.4",
+    "vite-plugin-commonjs": "^0.10.1"
+  },
+  "dependencies": {
+    "@subiz/wsclient": "^4.0.18"
+  }
+}
