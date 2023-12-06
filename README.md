@@ -130,9 +130,7 @@ webphone.onEvent(function (ev) { console.log("EVENT", ev) })
 Các sự kiện sẽ có dạng như bên dưới
 ```
 12/5/2023, 3:08:47 PM | { "type": "call_ringing", "data": {"call_info": {"started":1701763727793,"to_number":"0364821895","from_number":"02473021368","direction":"outbound","status":"dialing","device_id":"webrtcfxfqunbgcxiakdlrtrme","member_id":"agqmwfyuehpuzpehmv","call_id":"dc5a26f3-691b-21d3-5ad3-7cfd319fadb4"}}}
-
 12/5/2023, 3:08:54 PM | { "type": "call_joined", "data": {"call_info": {"conversation_id":"csrvqyzdnelvzyanls","started":1701763727793,"answered":1701763734787,"to_number":"0364821895","from_number":"02473021368","direction":"outbound","status":"active","device_id":"webrtcfxfqunbgcxiakdlrtrme","member_id":"agqmwfyuehpuzpehmv","call_id":"dc5a26f3-691b-21d3-5ad3-7cfd319fadb4"}}}
-
 12/5/2023, 3:09:00 PM | { "type": "call_ended", "data": {"call_info": {"conversation_id":"csrvqyzdnelvzyanls","started":1701763727793,"answered":1701763734787,"ended":1701763740189,"to_number":"0364821895","from_number":"02473021368","direction":"outbound","hangup_code":"Terminated","status":"ended","device_id":"webrtcfxfqunbgcxiakdlrtrme","member_id":"agqmwfyuehpuzpehmv","call_id":"dc5a26f3-691b-21d3-5ad3-7cfd319fadb4"}}}
 ```
 
@@ -151,6 +149,73 @@ fetch(`https://api.subiz.com.vn/4.0/accounts/${accid}/conversations/${convoid}?x
 
 Lưu ý: Ngay sau khi Subiz gửi cho bạn sự kiện kết thúc cuộc gọi. File ghi âm có thể chưa được trả về ngay. Subiz cần khoảng một vài giây để upload file tùy vào độ dài của cuộc gọi. Bạn nên có cơ chế retry để đảm bảo lấy được được URL của file ghi âm.
 
+#### API liệt kê cuộc gọi theo một khoảng thời gian
+
+Bạn cần xác định khoảng thời gian cần liệt kê (`hour = unix
+second/3600`). Kết của trả ra sẽ chỉ là những hội thoại được tạo trong
+khung giờ chỉ định
+
+```
+                           from_hour       to_hour
+                              |              |
+                              v              v
+thời gian: 0 -----------------<<<<<<<<<<<<<<<<---------------> now
+```
+```
+POST https://api.subiz.com.vn/4.0/report/call-ids?x-access-token={access_token}
+{
+  "created_hour_from": 472553,
+  "created_hour_to": 472720,
+  "limit": 20,
+  "anchor": ""
+}
+```
+Dữ liệu trả về mẫu
+
+```
+200 OK
+{
+  "anchor": "#csrvkdisxqqqgovmvr",
+  "conversations": [
+    {
+      "id": "csrvrlqaidbkxjbgpg",
+      "created": 1701832406382,
+      "agent_sent_ids": [
+        "agriviekoixdhmwpcc"
+      ],
+      "channel": "call",
+      "channel_touchpoint": "842473021368"
+    },
+    {
+      "id": "csrvrlpydmkrbpidcr",
+      "created": 1701832388885,
+      "agent_sent_ids": [
+        "agpxkgycwccstrfptx"
+      ],
+      "channel": "call",
+      "channel_touchpoint": "842473021368"
+    },
+	...
+  ]
+}
+```
+
+Ở request bạn có thể áp dụng thêm một số điều kiện như chiều của cuộc
+gọi hoặc đầu số gọi ra. Ví dụ:
+```
+{
+  "direction": "outbound",
+  "phones": ["842473021368"],
+  "created_hour_from": 472553,
+  "created_hour_to": 472720,
+}
+```
+
+Tham số `limit` và `anchor` dùng để phân trang kết quả trả về. Những cuộc
+gọi trả về sẽ được sắp xếp theo thứ tự *giảm dần* theo thời gian tạo. Để
+lấy trang kết quả tiếp theo, bạn lấy `anchor` của kết quả request
+trước, lắp vào request tiếp theo. Đến khi `anchor` trả về là rỗng hoặc
+danh sách cuộc gọi rỗng thì bạn đã lấy hết kết quả.
 
 ### Demo
 ![Demo](./demo.png "Demo")
