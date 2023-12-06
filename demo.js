@@ -5,7 +5,7 @@ var mycallid = "x";
 let accid;
 let eventLogs = {};
 
-// setTokenStatus renders where token is valid or invalid
+// setTokenStatus renders whether token is valid or invalid
 function setTokenStatus(me) {
   let $tokenStatus = document.getElementById("tokenStatus");
   if (me == "loading") {
@@ -24,7 +24,7 @@ function setTokenStatus(me) {
     return;
   }
 
-  $tokenStatus.innerHTML = "Token hợp lê. Xin chào " + me.fullname;
+  $tokenStatus.innerHTML = "Token hợp lệ. Xin chào " + me.fullname;
   $tokenStatus.classList.add("text-success");
   $tokenStatus.classList.remove("text-danger");
   $tokenStatus.classList.remove("text-muted");
@@ -116,7 +116,7 @@ function inputToken() {
   if (access_token) init();
 }
 
-// fetchRecordedUrl attemps to get recorded audio url
+// fetchRecordedUrl attemps to get the recorded audio url
 // since we dont know when the file is uploaded, we must retry multiple times.
 // this code is only for demo purpose
 function fetchRecordedUrl(callid) {
@@ -206,8 +206,12 @@ setInterval(function () {
     document.getElementById("infoHangupCode").innerHTML = call.hangup_code;
 }, 500);
 
+function hangupCall() {
+  if (!webphone) return;
+  webphone.hangupCall(mycallid);
+}
 
 // expose to window so we can call it in HTML
-window.makeCall = makeCall
-window.webphone = webphone
-window.inputToken = inputToken
+window.makeCall = makeCall;
+window.hangupCall = hangupCall;
+window.inputToken = inputToken;
