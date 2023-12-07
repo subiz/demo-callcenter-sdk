@@ -272,12 +272,12 @@ https://api.subiz.com.vn/4.0/accounts/accid/conversations/csrvqjiilytjxgffey?x-a
 
 | hangup code   |  Giải thích  |
 |---|---|
-|  <rỗng>  | Cuộc gọi kết thúc theo kịch bản tự động |
+|  <rỗng>  | Cuộc gọi diễn ra thành công hoặc cuộc gọi kết thúc theo kịch bản tự động |
 | `busy`   |  Máy bận |
-| `noanswer`  | Khách không trả lời  |
-| `congestion`   |  Nghẽn mạng  |
-| `cancel`   |  Người gọi hủy cuộc gọi  |
-| `answer`   |  Cuộc gọi thành công  |
+| `noanswer` | Khách không trả lời  |
+| `congestion` |  Nghẽn mạng hoặc nhà mạng từ chối thực hiện cuộc gọi |
+| `cancel` |  Người gọi hủy cuộc gọi  |
+| `chanunavail` | số sai hoặc nhà mạng từ chối thực hiện cuộc gọi |
 | *`Terminated` |  (sẽ xóa trong thời gian gần, thay bằng cancel) Người gọi hủy cuộc gọi  |
 
 ### Demo
