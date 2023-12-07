@@ -118,7 +118,7 @@ webphone.makeCall(toNumber, fromNumber)
 ```
 
 #### Lắng nghe sự kiện của cuộc gọi
-Bạn có thể gọi hàm `onEvent` để nhận các sự kiện realtime của cuộc gọi ví dụ: đổ chuông (call_dialing), kết thúc (call_ended)
+Bạn có thể gọi hàm `onEvent` để nhận các sự kiện realtime của cuộc gọi ví dụ: đổ chuông (`call_ringing`), kết thúc (`call_ended`)
 ```js
 const SubizWebPhone = require('@subiz/wsclient/webphone.js')
 let access_token = 'YOUR SUBIZ PERSONAL ACCESS TOKEN HERE';
@@ -216,6 +216,69 @@ gọi trả về sẽ được sắp xếp theo thứ tự *giảm dần* theo t
 lấy trang kết quả tiếp theo, bạn lấy `anchor` của kết quả request
 trước, lắp vào request tiếp theo. Đến khi `anchor` trả về là rỗng hoặc
 danh sách cuộc gọi rỗng thì bạn đã lấy hết kết quả.
+
+### hangup_code
+Hangup code cho biết tại sao cuộc gọi kết thúc. Bạn có thể lấy hangup
+code theo 2 cách
+#### 1. Nghe sự kiện realtime có type là call_ended
+
+```js
+webphone.onEvent(function (ev) { console.log("EVENT", ev) })
+
+{
+  "type": "call_ended",
+  "data": {
+    "call_info": {
+      "conversation_id": "csrvqyzdnelvzyanls",
+      "started": 1701763727793,
+      "answered": 1701763734787,
+      "ended": 1701763740189,
+      "to_number": "0364821895",
+      "from_number": "02473021368",
+      "direction": "outbound",
+      "hangup_code": "cancel", <----------
+      "status": "ended",
+      "call_id": "dc5a26f3-691b-21d3-5ad3-7cfd319fadb4"
+    }
+  }
+}
+```
+
+#### 2. Lấy thông tin cuộc gọi
+
+```
+GET
+https://api.subiz.com.vn/4.0/accounts/accid/conversations/csrvqjiilytjxgffey?x-access-token=access-token
+
+{
+  "id": "csrvqyzdnelvzyanls",
+  "state": "ended",
+  "call_info": {
+    "conversation_id": "csrvqyzdnelvzyanls",
+    "started": 1701763727793,
+    "answered": 1701763734787,
+    "ended": 1701763740189,
+    "to_number": "0364821895",
+    "from_number": "02473021368",
+    "direction": "outbound",
+    "hangup_code": "cancel", <----------
+    "status": "ended",
+    "call_id": "dc5a26f3-691b-21d3-5ad3-7cfd319fadb4"
+  }
+}
+```
+
+#### Bảng mã hangup_code
+
+| hangup code   |  Giải thích  |
+|---|---|
+|  <rỗng>  | Cuộc gọi kết thúc theo kịch bản tự động |
+| `busy`   |  Máy bận |
+| `noanswer`  | Khách không trả lời  |
+| `congestion`   |  Nghẽn mạng  |
+| `cancel`   |  Người gọi hủy cuộc gọi  |
+| `answer`   |  Cuộc gọi thành công  |
+| *`Terminated` |  (sẽ xóa trong thời gian gần, thay bằng cancel) Người gọi hủy cuộc gọi  |
 
 ### Demo
 ![Demo](./demo.png "Demo")
