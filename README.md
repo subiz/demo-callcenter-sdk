@@ -39,7 +39,9 @@ Khi có người nhắn tin vào Facebook fanpage, Zalo OA hay gọi vào số t
 #### Agent
 Một thành viên của nội bộ doanh nghiệp, có thể là sale, marketing, trực page hay quản lý.
 
-Mỗi agent sẽ được cấp một tài khoản (email/password) để sử dụng Subiz. Agent có thể đăng nhập vào Subiz để tạo access_token cá nhân của mình, access_token này sau đó có thể dùng để gọi API.
+Mỗi agent sẽ được cấp một tài khoản (email/password) để sử dụng
+Subiz. Agent có thể đăng nhập vào Subiz để tạo access_token cá nhân
+của mình, access_token này sau đó có thể dùng để gọi API.
 
 #### Conversation - Hội thoại
 Một cuộc trò chuyện (cuộc gọi) với khách hàng. Hội thoại sẽ ghi lại thời điểm xảy ra cuộc gọi, số tổng đài, số của khách, ghi âm và nhiều thông số của cuộc gọi.
@@ -51,7 +53,7 @@ GET https://api.subiz.com.vn/4.0/accounts/accid/conversations/csrvqjiilytjxgffey
 Dưới đây là chi tiết của một cuộc gọi cụ thể (kết quả trả về của request GET trên)
 ```js
 {
-  "account_id": "acpxkgumifuoofoosble",
+  "account_id": "acpxkgumile",
   "id": "csrvqjiilytjxgffey", // định danh cho hội thoại - cuộc gọi
   "created": 1701678775101, // thời gian tạo
   "members": [ // danh sách những người tham gia hội thoại (bao gồm khách, agent trả lời, giám sát viên, agent được transfer, ...)
@@ -86,7 +88,7 @@ Dưới đây là chi tiết của một cuộc gọi cụ thể (kết quả tr
     "duration_sec": 215,
     "status": "ended",
     "recorded_audio": { // file ghi âm
-      "name": "2023-12-04_acpxkgumifuoofoosble_csrvqjiilytjxgffey_recorded.wav",
+      "name": "2023-12-04_acpxkgumifu_csrvqjiilytjxgffey_recorded.wav",
       "type": "audio/x-wav",
       "size": 3452844,
       "md5": "bebf7148fecf94c0e59843373ff88434",
@@ -315,3 +317,106 @@ Port 5174 is in use, trying another one...
 ```
 
 Truy cập http://localhost:5173/demo.html để vào trang demo. Ở đây bạn cần nhập token trước khi có thể thực hiện cuộc gọi đi.
+
+## API quản lý tài khoản
+Phần này mô tả một số API giúp bạn tạo agent (sale), sinh access
+token cho họ.
+Trước khi sử dụng được những API này, bạn cần đảm bảo rằng mình là chủ
+tài khoản, tiếp đó hãy xác định các thông số sau:
+* `account id`: ID tài khoản của doanh nghiệp mình. Xem trong trang [Cài đặt](https://app.subiz.com.vn/settings/)
+* `agent id`: ID của một agent cụ thể. Xem trong trang [Quản lý
+  agent](https://app.subiz.com.vn/settings/agents). Khi click vào xem
+  chi tiết từng agent, bạn có thể nhìn thấy ID của agent trên thanh
+  địa chỉ của trình duyệt.
+
+### Tạo agent mới
+```
+POST https://api.subiz.com.vn/4.0/accounts/<accid>/agents?x-access-token=..."
+
+{
+  "id": "new",
+  "state": "active",
+  "lang": "vi",
+  "encrypted_password": "ZacHsYrA",
+  "scopes": [
+    "agent"
+  ],
+  "timezone": "+07:00",
+  "fullname": "Mỹ Linh",
+  "email": "linhlinh@test.com",
+  "extension": null
+}
+```
+Kết quả trả về có dạng
+
+```js
+{
+  "id": "<agentid>",
+  "account_id": "<accountid>",
+  "fullname": "Mỹ Linh",
+  "email": "linhlinh@subiz.com",
+  "is_owner": false,
+  "lang": "vi",
+  "timezone": "+07:00",
+  "state": "active",
+  "password_changed": 1702010629876,
+  "modified": 1702010629876,
+  "type": "agent",
+  "scopes": [
+    "agent"
+  ],
+  "extension": 2008
+}
+```
+
+### Tạo access token cho agent
+Agent có thể tạo access token để tiện cho việc sử dụng API. Chủ doanh
+nghiệp (account) có thể tạo access token cho bất kỳ agent nào sử dụng
+api dưới đây
+```
+POST https://api.subiz.com.vn/4.0/accounts/<accid>/agents/<agentid>/apikeys?x-access-token=<access_token>
+
+{
+  "ttls": 0,
+  "note": "Gọi tổng đài",
+}
+```
+
+| Tham số   |  Giải thích  |
+|---|---|
+| `accid` | ID tài khoản của *doanh nghiệp* bạn (tránh nhầm với agent id của bạn) |
+| `access_token` | Mã truy cập cá nhân của bạn |
+| `agentid` | ID của bạn. Nếu bạn là chủ tài khoản và mong muốn tạo cho agent khác, bạn điền ID của agent đó vào |
+| `ttls` | thời gian hợp lệ của token sau khi tạo (tính bằng giây). Nếu bạn truyền vào là 0 thì token sẽ không hết hạn. |
+| `note` | một trường mô tả nhằm mục đích gợi nhớ để sau này bạn quản lý dễ hơn |
+
+Ví dụ trả về sau khi gọi thành công
+```js
+200 OK
+{
+  "agent_id": "<agentid>",
+  "client_id": "dashboard",
+  "id": "airvsskgxgfdxzmstvqu",
+  "kind": "agent",
+  "refresh_token": "acpxkgumi_agqmwfyzpehmv_AKrtkgxgfdpjgrdfalfldjglzxmpkxcfgdkalfjahfj",
+  "access_token": "acpxkgumi_agqmwfyzpehmv_AKrtkgxgfdpjgrdfalfldjglzxmpkxcfgdkalfjahfj",
+  "scopes": [
+    "all"
+  ],
+  "created": 1702010379903,
+  "last_used": 1702010379903,
+  "access_token_expired": 4855610379903,
+  "access_token_generated": 1702010379903,
+  "type": "apikey",
+  "client_version": "v1.0.0",
+  "note": "Gọi tổng đài"
+}
+```
+
+Sau khi có access token bạn có thể thử lại bằng cách lấy access token
+mới lắp vào request sau
+```
+GET https://api.subiz.com/4.0/me?x-access-token=...
+```
+
+Nếu trả ra thông tin của agent thì token bạn tạo ra là hợp lệ
