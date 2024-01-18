@@ -13,11 +13,11 @@
   "homepage": "https://github.com/subiz/demo-callcenter-sdk#readme",
   "description": "",
   "devDependencies": {
-    "tape": "^5.7.2",
-    "vite": "^5.0.4",
+    "tape": "^5.7.3",
+    "vite": "^5.0.11",
     "vite-plugin-commonjs": "^0.10.1"
   },
   "dependencies": {
-    "@subiz/wsclient": "^4.0.18"
+    "@subiz/wsclient": "^4.0.22"
   }
 }

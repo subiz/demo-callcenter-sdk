@@ -119,6 +119,18 @@ let webphone = new SubizWebPhone(access_token)
 webphone.makeCall(toNumber, fromNumber)
 ```
 
+##### Tự động đảo số khi gọi lỗi
+Nếu bạn có nhiều đầu số, bạn có thể truyền một mảng vào tham số fromNumber. Ví dụ:
+```js
+webphone.makeCall('03412312', ['0247000001', '0247000002', '0247000003', '0247000004'])
+```
+
+Webphone sẽ thực hiện cuộc gọi đầu tiên bằng đầu số `02470000001`, nếu cuộc gọi thất bại do nhà mạng từ chối hoặc do lỗi tín hiệu. Webphone sẽ lần lượt thử gọi bằng các đầu số sau đó `0247000002`, `0247000003`, ... Quá trình này sẽ kết thúc khi một trong những điều kiện sau xảy ra:
+1. Cuộc gọi diễn ra thành công (đầu bên kia nhấc máy)
+2. Agent chủ động bấm ngắt cuộc gọi
+3. Đã hết đầu số để thử
+
+
 #### Lắng nghe sự kiện của cuộc gọi
 Bạn có thể gọi hàm `onEvent` để nhận các sự kiện realtime của cuộc gọi ví dụ: đổ chuông (`call_ringing`), kết thúc (`call_ended`)
 ```js
